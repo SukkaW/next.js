@@ -262,6 +262,14 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkPropsReal>(
       ...restProps
     } = props
 
+    if (process.env.NODE_ENV === 'development') {
+      if (typeof hrefProp === 'string' && hrefProp.startsWith('.')) {
+        throw new Error(
+          `The prop "href" received a relative path \`${hrefProp}\`, which is not supported by Next.js. Please use an absolute path ((not starts with a dot)) instead. More: https://nextjs.org/docs/messages/next-link-relative-url`
+        )
+      }
+    }
+
     children = childrenProp
 
     if (legacyBehavior && typeof children === 'string') {
