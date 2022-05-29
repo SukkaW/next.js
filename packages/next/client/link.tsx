@@ -11,6 +11,10 @@ import {
 } from '../shared/lib/router/router'
 import { useRouter } from './router'
 import { useIntersection } from './use-intersection'
+import {
+  requestIdleCallback,
+  cancelIdleCallback,
+} from './request-idle-callback'
 
 type Url = string | UrlObject
 type RequiredKeys<T> = {
@@ -350,9 +354,15 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkPropsReal>(
       const isPrefetched =
         prefetched[href + '%' + as + (curLocale ? '%' + curLocale : '')]
       if (shouldPrefetch && !isPrefetched) {
-        prefetch(router, href, as, {
-          locale: curLocale,
+        const idleCallbackId = requestIdleCallback(() => {
+          prefetch(router, href, as, {
+            locale: curLocale,
+          })
         })
+
+        return () => {
+          cancelIdleCallback(idleCallbackId)
+        }
       }
     }, [as, href, isVisible, locale, p, router])
 
