@@ -34,6 +34,11 @@ const noError = async (pathname) => {
 
 const didPrefetch = async (pathname) => {
   const browser = await webdriver(appPort, pathname)
+
+  // prefetch is now wrapped inside requestIdleCallback, wait to avoid flakiness
+  // a timeout of 5 seconds is set to avoid hanging the test
+  await browser.waitForElementByCss('link[rel=prefetch]', 5000)
+
   const links = await browser.elementsByCss('link[rel=prefetch]')
   let found = false
 

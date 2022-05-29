@@ -20,6 +20,25 @@ let stallJs
 let proxyServer
 let nextDataRequests = []
 
+const didPrefetch = async (pathnameToCheck, browser) => {
+  // prefetch is now wrapped inside requestIdleCallback, wait to avoid flakiness
+  // a timeout of 5 seconds is set to avoid hanging the test
+  await browser.waitForElementByCss('link[rel=prefetch]', 5000)
+
+  const links = await browser.elementsByCss('link[rel=prefetch]')
+  let found = false
+
+  for (const link of links) {
+    const href = await link.getAttribute('href')
+    if (href.includes(pathnameToCheck)) {
+      found = true
+      break
+    }
+  }
+
+  return found
+}
+
 describe('Prefetching Links in viewport', () => {
   beforeAll(async () => {
     await nextBuild(appDir)
@@ -94,16 +113,8 @@ describe('Prefetching Links in viewport', () => {
     let browser
     try {
       browser = await webdriver(appPort, '/')
-      const links = await browser.elementsByCss('link[rel=prefetch]')
-      let found = false
 
-      for (const link of links) {
-        const href = await link.getAttribute('href')
-        if (href.includes('first')) {
-          found = true
-          break
-        }
-      }
+      const found = await didPrefetch('first', browser)
       expect(found).toBe(true)
     } finally {
       if (browser) await browser.close()
@@ -114,16 +125,8 @@ describe('Prefetching Links in viewport', () => {
     let browser
     try {
       browser = await webdriver(appPort, '/rewrite-prefetch')
-      const links = await browser.elementsByCss('link[rel=prefetch]')
-      let found = false
+      const found = await didPrefetch('%5Bslug%5D', browser)
 
-      for (const link of links) {
-        const href = await link.getAttribute('href')
-        if (href.includes('%5Bslug%5D')) {
-          found = true
-          break
-        }
-      }
       expect(found).toBe(true)
 
       const hrefs = await browser.eval(`Object.keys(window.next.router.sdc)`)
@@ -345,16 +348,7 @@ describe('Prefetching Links in viewport', () => {
   it('should not prefetch when prefetch is explicitly set to false', async () => {
     const browser = await webdriver(appPort, '/opt-out')
 
-    const links = await browser.elementsByCss('link[rel=prefetch]')
-    let found = false
-
-    for (const link of links) {
-      const href = await link.getAttribute('href')
-      if (href.includes('another')) {
-        found = true
-        break
-      }
-    }
+    const found = await didPrefetch('another', browser)
     expect(found).toBe(false)
   })
 
