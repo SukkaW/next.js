@@ -32,7 +32,7 @@ importers:
       '@next/swc': workspace:*
       '@svgr/webpack': 5.5.0
       '@swc/cli': 0.1.55
-      '@swc/core': 1.2.148
+      '@swc/core': 1.2.197
       '@swc/helpers': 0.3.17
       '@testing-library/react': 13.0.0
       '@types/cheerio': 0.22.16
@@ -308,9 +308,9 @@ importers:
       turbo: 1.2.14
       typescript: 4.6.3
       wait-port: 0.2.2
-      webpack: link:node_modules/webpack5
+      webpack: 5.73.0_@swc+core@1.2.148
       webpack-bundle-analyzer: 4.3.0
-      worker-loader: 3.0.7_2opjno65lyt7hgwek6rdc5kfzu
+      worker-loader: 3.0.7_webpack@5.73.0
 
   packages/create-next-app:
     specifiers:
@@ -20644,6 +20644,32 @@ packages:
       worker-farm: 1.7.0
     dev: true
 
+  /terser-webpack-plugin/5.2.4_ai2j7bpouqpuepqe2h7rahoxba:
+    resolution: {integrity: sha512-E2CkNMN+1cho04YpdANyRrn8CyN4yMy+WdFKZIySFZrGXZxJwJP6PMNGGc/Mcr6qygQHUUqRxnAPmi0M9f00XA==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      '@swc/core': '*'
+      esbuild: '*'
+      uglify-js: '*'
+      webpack: ^5.1.0
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      esbuild:
+        optional: true
+      uglify-js:
+        optional: true
+    dependencies:
+      '@swc/core': 1.2.148
+      jest-worker: 27.0.6
+      p-limit: 3.1.0
+      schema-utils: 3.1.1
+      serialize-javascript: 6.0.0
+      source-map: 0.6.1
+      terser: 5.10.0
+      webpack: 5.73.0_@swc+core@1.2.148
+    dev: true
+
   /terser-webpack-plugin/5.2.4_webpack@5.73.0:
     resolution: {integrity: sha512-E2CkNMN+1cho04YpdANyRrn8CyN4yMy+WdFKZIySFZrGXZxJwJP6PMNGGc/Mcr6qygQHUUqRxnAPmi0M9f00XA==}
     engines: {node: '>= 10.13.0'}
@@ -22095,6 +22121,46 @@ packages:
       - uglify-js
     dev: true
 
+  /webpack/5.73.0_@swc+core@1.2.148:
+    resolution: {integrity: sha512-svjudQRPPa0YiOYa2lM/Gacw0r6PvxptHj4FuEKQ2kX05ZLkjbVc5MnPs6its5j7IZljnIqSVo/OsY2X0IpHGA==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    peerDependencies:
+      webpack-cli: '*'
+    peerDependenciesMeta:
+      webpack-cli:
+        optional: true
+    dependencies:
+      '@types/eslint-scope': 3.7.3
+      '@types/estree': 0.0.51
+      '@webassemblyjs/ast': 1.11.1
+      '@webassemblyjs/wasm-edit': 1.11.1
+      '@webassemblyjs/wasm-parser': 1.11.1
+      acorn: 8.6.0
+      acorn-import-assertions: 1.7.6_acorn@8.6.0
+      browserslist: 4.20.2
+      chrome-trace-event: 1.0.2
+      enhanced-resolve: 5.9.3
+      es-module-lexer: 0.9.0
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.9
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.2.0
+      mime-types: 2.1.30
+      neo-async: 2.6.2
+      schema-utils: 3.1.1
+      tapable: 2.2.0
+      terser-webpack-plugin: 5.2.4_ai2j7bpouqpuepqe2h7rahoxba
+      watchpack: 2.4.0
+      webpack-sources: 3.2.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
+    dev: true
+
   /websocket-driver/0.7.3:
     resolution: {integrity: sha512-bpxWlvbbB459Mlipc5GBzzZwhoZgGEZLuqPaR0INBGnPAY1vdBX6hPnoFXiw+3yWxDuHyQjO2oXTMyS8A5haFg==}
     engines: {node: '>=0.8.0'}
@@ -22224,7 +22290,7 @@ packages:
       errno: 0.1.7
     dev: true
 
-  /worker-loader/3.0.7_2opjno65lyt7hgwek6rdc5kfzu:
+  /worker-loader/3.0.7_webpack@5.73.0:
     resolution: {integrity: sha512-LjYLuYJw6kqQKDoygpoD5vWeR1CbZjuVSW3/8pFsptMlUl8gatNM/pszhasSDAWt+dYxMipWB6695k+1zId+iQ==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -22232,7 +22298,7 @@ packages:
     dependencies:
       loader-utils: 2.0.0
       schema-utils: 3.1.1
-      webpack: link:node_modules/webpack5
+      webpack: 5.73.0_@swc+core@1.2.148
     dev: true
 
   /wrap-ansi/3.0.1:
