@@ -126,6 +126,7 @@
     "@next/react-dev-overlay": "12.1.7-canary.39",
     "@next/react-refresh-utils": "12.1.7-canary.39",
     "@next/swc": "12.1.7-canary.39",
+    "@swc/core": "1.2.197",
     "@taskr/clear": "1.1.0",
     "@taskr/esnext": "1.1.0",
     "@taskr/watch": "1.1.0",
