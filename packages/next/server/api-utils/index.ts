@@ -174,6 +174,13 @@ interface LazyProps {
   req: NextApiRequest
 }
 
+const optsDescriptor = { configurable: true, enumerable: true }
+const optsResetDescriptor = {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+}
+
 /**
  * Execute getter function only if its needed
  * @param LazyProps `req` and `params` for lazyProp
@@ -185,19 +192,16 @@ export function setLazyProp<T>(
   prop: string,
   getter: () => T
 ): void {
-  const opts = { configurable: true, enumerable: true }
-  const optsReset = { ...opts, writable: true }
-
   Object.defineProperty(req, prop, {
-    ...opts,
+    ...optsDescriptor,
     get: () => {
       const value = getter()
       // we set the property on the object to avoid recalculating it
-      Object.defineProperty(req, prop, { ...optsReset, value })
+      Object.defineProperty(req, prop, { ...optsResetDescriptor, value })
       return value
     },
     set: (value) => {
-      Object.defineProperty(req, prop, { ...optsReset, value })
+      Object.defineProperty(req, prop, { ...optsResetDescriptor, value })
     },
   })
 }

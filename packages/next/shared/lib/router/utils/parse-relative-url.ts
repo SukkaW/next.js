@@ -10,6 +10,8 @@ export interface ParsedRelativeUrl {
   search: string
 }
 
+const dummybase = new URL('http://n')
+
 /**
  * Parses path-relative urls (e.g. `/hello/world?foo=bar`). If url isn't path-relative
  * (e.g. `./hello`) then at least base must be.
@@ -20,14 +22,15 @@ export function parseRelativeUrl(
   url: string,
   base?: string
 ): ParsedRelativeUrl {
-  const globalBase = new URL(
-    typeof window === 'undefined' ? 'http://n' : getLocationOrigin()
-  )
+  const globalBase =
+    typeof window === 'undefined' ? dummybase : new URL(getLocationOrigin())
 
   const resolvedBase = base
     ? new URL(base, globalBase)
-    : url.startsWith('.')
-    ? new URL(typeof window === 'undefined' ? 'http://n' : window.location.href)
+    : url[0] === '.'
+    ? typeof window === 'undefined'
+      ? dummybase
+      : new URL(window.location.href)
     : globalBase
 
   const { pathname, searchParams, search, hash, href, origin } = new URL(
