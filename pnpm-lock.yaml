@@ -462,6 +462,7 @@ importers:
       '@types/tar': 4.0.3
       '@types/text-table': 0.2.1
       '@types/ua-parser-js': 0.7.36
+      '@types/use-sync-external-store': 0.0.3
       '@types/uuid': 8.3.1
       '@types/webpack-sources1': npm:@types/webpack-sources@0.1.5
       '@types/ws': 8.2.0
@@ -558,8 +559,8 @@ importers:
       source-map: 0.6.1
       stream-browserify: 3.0.0
       stream-http: 3.1.1
-      string_decoder: 1.3.0
       string-hash: 1.1.3
+      string_decoder: 1.3.0
       strip-ansi: 6.0.0
       styled-jsx: 5.0.4
       tar: 6.1.11
@@ -653,6 +654,7 @@ importers:
       '@types/tar': 4.0.3
       '@types/text-table': 0.2.1
       '@types/ua-parser-js': 0.7.36
+      '@types/use-sync-external-store': 0.0.3
       '@types/uuid': 8.3.1
       '@types/webpack-sources1': /@types/webpack-sources/0.1.5
       '@types/ws': 8.2.0
@@ -747,8 +749,8 @@ importers:
       source-map: 0.6.1
       stream-browserify: 3.0.0
       stream-http: 3.1.1
-      string_decoder: 1.3.0
       string-hash: 1.1.3
+      string_decoder: 1.3.0
       strip-ansi: 6.0.0
       tar: 6.1.11
       taskr: 1.1.0
@@ -5955,6 +5957,10 @@ packages:
     resolution: {integrity: sha512-FvUupuM3rlRsRtCN+fDudtmytGO6iHJuuRKS1Ss0pG5z8oX0diNEw94UEL7hgDbpN94rgaK5R7sWm6RrSkZuAQ==}
     dev: true
 
+  /@types/use-sync-external-store/0.0.3:
+    resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
+    dev: true
+
   /@types/uuid/8.3.1:
     resolution: {integrity: sha512-Y2mHTRAbqfFkpjldbkHGY8JIzRN6XqYRliG8/24FcHm2D2PwW24fl5xMRTVGdrb7iMrwCaIEbLWerGIkXuFWVg==}
     dev: true
@@ -8523,8 +8529,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      is-text-path: 1.0.1
       JSONStream: 1.3.5
+      is-text-path: 1.0.1
       lodash: 4.17.21
       meow: 8.1.2
       split2: 2.2.0

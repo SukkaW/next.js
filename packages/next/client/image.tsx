@@ -18,6 +18,12 @@ import { ImageConfigContext } from '../shared/lib/image-config-context'
 import { warnOnce } from '../shared/lib/utils'
 import { normalizePathTrailingSlash } from './normalize-trailing-slash'
 
+const { useSyncExternalStore } = (
+  process.env.__NEXT_REACT_ROOT
+    ? require('react')
+    : require('use-sync-external-store/shim')
+) as typeof import('use-sync-external-store/shim')
+
 function normalizeSrc(src: string): string {
   return src[0] === '/' ? src.slice(1) : src
 }
@@ -25,11 +31,29 @@ function normalizeSrc(src: string): string {
 const { experimentalRemotePatterns = [], experimentalUnoptimized } =
   (process.env.__NEXT_IMAGE_OPTS as any) || {}
 const configEnv = process.env.__NEXT_IMAGE_OPTS as any as ImageConfigComplete
-const loadedImageURLs = new Set<string>()
+
 const allImgs = new Map<
   string,
   { src: string; priority: boolean; placeholder: string }
 >()
+
+// TODO: Currently in Next.js' components, only this global variable is read during rendering
+// We should extract a store util (or use a existing store library) in the future
+const loadedImageURLStores = {
+  d /* ata */: new Set(),
+  l /* isteners */: new Set<() => void>(),
+  sub /* scribe */: (callback: () => void) => {
+    loadedImageURLStores.l.add(callback)
+
+    return () => loadedImageURLStores.l.delete(callback)
+  },
+  get /* Snapshot */: () => loadedImageURLStores.d,
+  add: (src: string) => {
+    loadedImageURLStores.d.add(src)
+    loadedImageURLStores.l.forEach((cb) => cb())
+  },
+} as const
+
 let perfObserver: PerformanceObserver | undefined
 const emptyDataURL =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
@@ -435,7 +459,7 @@ function handleLoading(
       // - decode() completes
       return
     }
-    loadedImageURLs.add(src)
+    loadedImageURLStores.add(src)
     if (placeholder === 'blur') {
       setBlurComplete(true)
     }
@@ -670,7 +694,13 @@ export default function Image({
     unoptimized = true
     isLazy = false
   }
-  if (typeof window !== 'undefined' && loadedImageURLs.has(src)) {
+
+  const isImageLoadedBefore = useSyncExternalStore(
+    loadedImageURLStores.sub,
+    useCallback(() => loadedImageURLStores.get().has(src), [src])
+  )
+
+  if (typeof window !== 'undefined' && isImageLoadedBefore) {
     isLazy = false
   }
   if (experimentalUnoptimized) {
