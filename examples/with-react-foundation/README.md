@@ -6,7 +6,7 @@ This example shows how to use Next.js with [react-foundation](https://digia.onli
 
 Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-react-foundation)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-react-foundation&project-name=with-react-foundation&repository-name=with-react-foundation)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-react-foundation&project-name=with-react-foundation&repository-name=with-react-foundation)
 
 ## How to use
 
@@ -14,9 +14,13 @@ Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packag
 
 ```bash
 npx create-next-app --example with-react-foundation with-react-foundation-app
-# or
+```
+
+```bash
 yarn create next-app --example with-react-foundation with-react-foundation-app
-# or
+```
+
+```bash
 pnpm create next-app --example with-react-foundation with-react-foundation-app
 ```
 

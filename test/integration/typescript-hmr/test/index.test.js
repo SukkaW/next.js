@@ -3,7 +3,6 @@
 import fs from 'fs-extra'
 import {
   check,
-  ignoreFullRefreshWarnings,
   findPort,
   getBrowserBodyText,
   getRedboxHeader,
@@ -37,12 +36,16 @@ describe('TypeScript HMR', () => {
       let browser
       try {
         browser = await webdriver(appPort, '/hello')
-        await ignoreFullRefreshWarnings(browser)
         await check(() => getBrowserBodyText(browser), /Hello World/)
 
         const pagePath = join(appDir, 'pages/hello.tsx')
         const originalContent = await fs.readFile(pagePath, 'utf8')
         const editedContent = originalContent.replace('Hello', 'COOL page')
+
+        if (process.env.TURBOPACK) {
+          // TODO Turbopack needs a bit to start watching
+          await new Promise((resolve) => setTimeout(resolve, 500))
+        }
 
         // change the content
         await fs.writeFile(pagePath, editedContent, 'utf8')
@@ -91,11 +94,14 @@ describe('TypeScript HMR', () => {
     const origContent = await fs.readFile(pagePath, 'utf8')
     try {
       browser = await webdriver(appPort, '/type-error-recover')
-      await ignoreFullRefreshWarnings(browser)
       const errContent = origContent.replace(
         '() => <p>Hello world</p>',
         '(): boolean => <p>hello with error</p>'
       )
+      if (process.env.TURBOPACK) {
+        // TODO Turbopack needs a bit to start watching
+        await new Promise((resolve) => setTimeout(resolve, 500))
+      }
       await fs.writeFile(pagePath, errContent)
       const res = await check(
         async () => {

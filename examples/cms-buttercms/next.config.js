@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
   async rewrites() {
@@ -30,6 +31,13 @@ module.exports = {
         }))
   },
   images: {
-    domains: ['cdn.buttercms.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.buttercms.com',
+        port: '',
+        pathname: '/my-account/**',
+      },
+    ],
   },
 }

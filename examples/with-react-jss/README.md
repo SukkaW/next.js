@@ -8,7 +8,7 @@ The critical styles will be injected into the head when server rendered.
 
 Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-react-jss)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-react-jss&project-name=with-react-jss&repository-name=with-react-jss)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-react-jss&project-name=with-react-jss&repository-name=with-react-jss)
 
 ## How to use
 
@@ -16,9 +16,13 @@ Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packag
 
 ```bash
 npx create-next-app --example with-react-jss with-react-jss-app
-# or
+```
+
+```bash
 yarn create next-app --example with-react-jss with-react-jss-app
-# or
+```
+
+```bash
 pnpm create next-app --example with-react-jss with-react-jss-app
 ```
 

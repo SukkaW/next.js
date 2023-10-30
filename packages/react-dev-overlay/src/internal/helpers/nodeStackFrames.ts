@@ -1,4 +1,5 @@
-import { parse, StackFrame } from 'stacktrace-parser'
+import type { StackFrame } from 'stacktrace-parser'
+import { parse } from 'stacktrace-parser'
 
 export function getFilesystemFrame(frame: StackFrame): StackFrame {
   const f: StackFrame = { ...frame }
@@ -27,6 +28,15 @@ export function getErrorSource(error: Error): 'server' | 'edge-server' | null {
 
 type ErrorType = 'edge-server' | 'server'
 
+export function decorateServerError(error: Error, type: ErrorType) {
+  Object.defineProperty(error, symbolError, {
+    writable: false,
+    enumerable: false,
+    configurable: false,
+    value: type,
+  })
+}
+
 export function getServerError(error: Error, type: ErrorType): Error {
   let n: Error
   try {
@@ -37,7 +47,7 @@ export function getServerError(error: Error, type: ErrorType): Error {
 
   n.name = error.name
   try {
-    n.stack = parse(error.stack!)
+    n.stack = `${n.toString()}\n${parse(error.stack!)
       .map(getFilesystemFrame)
       .map((f) => {
         let str = `    at ${f.methodName}`
@@ -53,20 +63,11 @@ export function getServerError(error: Error, type: ErrorType): Error {
         }
         return str
       })
-      .join('\n')
+      .join('\n')}`
   } catch {
     n.stack = error.stack
   }
 
   decorateServerError(n, type)
   return n
-}
-
-export function decorateServerError(error: Error, type: ErrorType) {
-  Object.defineProperty(error, symbolError, {
-    writable: false,
-    enumerable: false,
-    configurable: false,
-    value: type,
-  })
 }

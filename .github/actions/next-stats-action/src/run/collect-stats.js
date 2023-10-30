@@ -1,5 +1,5 @@
 const path = require('path')
-const fs = require('fs-extra')
+const fs = require('fs/promises')
 const getPort = require('get-port')
 const fetch = require('node-fetch')
 const glob = require('../util/glob')
@@ -35,6 +35,7 @@ module.exports = async function collectStats(
     (hasPagesToFetch || hasPagesToBench)
   ) {
     const port = await getPort()
+    const startTime = Date.now()
     const child = spawn(statsConfig.appStartCommand, {
       cwd: curDir,
       env: {
@@ -44,14 +45,36 @@ module.exports = async function collectStats(
     })
     let exitCode = null
     let logStderr = true
-    child.stdout.on('data', (data) => process.stdout.write(data))
+
+    let serverReadyResolve
+    let serverReadyResolved = false
+    const serverReadyPromise = new Promise((resolve) => {
+      serverReadyResolve = resolve
+    })
+
+    child.stdout.on('data', (data) => {
+      if (data.toString().includes('- Local:') && !serverReadyResolved) {
+        serverReadyResolved = true
+        serverReadyResolve()
+      }
+      process.stdout.write(data)
+    })
     child.stderr.on('data', (data) => logStderr && process.stderr.write(data))
 
     child.on('exit', (code) => {
+      if (!serverReadyResolved) {
+        serverReadyResolve()
+        serverReadyResolved = true
+      }
       exitCode = code
     })
-    // give app a second to start up
-    await new Promise((resolve) => setTimeout(() => resolve(), 1500))
+
+    await serverReadyPromise
+    if (!orderedStats['General']) {
+      orderedStats['General'] = {}
+    }
+    orderedStats['General']['nextStartReadyDuration (ms)'] =
+      Date.now() - startTime
 
     if (exitCode !== null) {
       throw new Error(
@@ -61,7 +84,7 @@ module.exports = async function collectStats(
 
     if (hasPagesToFetch) {
       const fetchedPagesDir = path.join(curDir, 'fetched-pages')
-      await fs.mkdirp(fetchedPagesDir)
+      await fs.mkdir(fetchedPagesDir, { recursive: true })
 
       for (let url of runConfig.pagesToFetch) {
         url = url.replace('$PORT', port)

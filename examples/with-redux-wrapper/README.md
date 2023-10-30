@@ -6,7 +6,7 @@ Usually splitting your app state into `pages` feels natural but sometimes you'll
 
 Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-redux-wrapper&project-name=with-redux-wrapper&repository-name=with-redux-wrapper)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-redux-wrapper&project-name=with-redux-wrapper&repository-name=with-redux-wrapper)
 
 ## How to use
 
@@ -14,9 +14,13 @@ Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packag
 
 ```bash
 npx create-next-app --example with-redux-wrapper with-redux-wrapper-app
-# or
+```
+
+```bash
 yarn create next-app --example with-redux-wrapper with-redux-wrapper-app
-# or
+```
+
+```bash
 pnpm create next-app --example with-redux-wrapper with-redux-wrapper-app
 ```
 

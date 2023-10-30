@@ -1,6 +1,8 @@
-/* global globalThis, URLPattern */
-import { NextRequest, NextResponse } from 'next/server'
+/* global globalThis */
+import { NextRequest, NextResponse, URLPattern } from 'next/server'
 import magicValue from 'shared-package'
+
+export const config = { regions: 'auto' }
 
 const PATTERNS = [
   [
@@ -37,14 +39,31 @@ export async function middleware(request) {
   const url = request.nextUrl
 
   if (request.headers.get('x-prerender-revalidate')) {
-    const res = NextResponse.next()
-    res.headers.set('x-middleware', 'hi')
-    return res
+    return NextResponse.next({
+      headers: { 'x-middleware': 'hi' },
+    })
   }
 
   // this is needed for tests to get the BUILD_ID
   if (url.pathname.startsWith('/_next/static/__BUILD_ID')) {
     return NextResponse.next()
+  }
+
+  if (
+    url.pathname.includes('/_next/static/chunks/pages/_app-non-existent.js')
+  ) {
+    return NextResponse.rewrite('https://example.vercel.sh')
+  }
+
+  if (url.pathname === '/api/edge-search-params') {
+    const newUrl = url.clone()
+    newUrl.searchParams.set('foo', 'bar')
+    return NextResponse.rewrite(newUrl)
+  }
+
+  if (url.pathname === '/') {
+    url.pathname = '/ssg/first'
+    return NextResponse.rewrite(url)
   }
 
   if (url.pathname === '/to-ssg') {
@@ -97,23 +116,18 @@ export async function middleware(request) {
   }
 
   if (url.pathname === '/global') {
-    // The next line is required to allow to find the env variable
-    // eslint-disable-next-line no-unused-expressions
-    process.env.MIDDLEWARE_TEST
-
-    // The next line is required to allow to find the env variable
-    // eslint-disable-next-line no-unused-expressions
-    const { ANOTHER_MIDDLEWARE_TEST } = process.env
-    if (!ANOTHER_MIDDLEWARE_TEST) {
-      console.log('missing ANOTHER_MIDDLEWARE_TEST')
-    }
-
-    const { STRING_ENV_VAR: stringEnvVar } = process['env']
-    if (!stringEnvVar) {
-      console.log('missing STRING_ENV_VAR')
-    }
-
-    return serializeData(JSON.stringify({ process: { env: process.env } }))
+    return serializeData(
+      JSON.stringify({
+        process: {
+          env: {
+            ANOTHER_MIDDLEWARE_TEST: process.env.ANOTHER_MIDDLEWARE_TEST,
+            STRING_ENV_VAR: process.env.STRING_ENV_VAR,
+            MIDDLEWARE_TEST: process.env.MIDDLEWARE_TEST,
+            NEXT_RUNTIME: process.env.NEXT_RUNTIME,
+          },
+        },
+      })
+    )
   }
 
   if (url.pathname.endsWith('/globalthis')) {
@@ -182,6 +196,15 @@ export async function middleware(request) {
     return NextResponse.rewrite(new URL('/about/a', request.url))
   }
 
+  if (url.pathname === '/redirect-to-somewhere') {
+    url.pathname = '/somewhere'
+    return NextResponse.redirect(url, {
+      headers: {
+        'x-redirect-header': 'hi',
+      },
+    })
+  }
+
   if (url.pathname.startsWith('/url')) {
     try {
       if (request.nextUrl.pathname === '/url/relative-url') {
@@ -224,18 +247,18 @@ export async function middleware(request) {
     throw new Error('test error')
   }
 
-  const response = NextResponse.next()
   const original = new URL(request.url)
-  response.headers.set('req-url-path', `${original.pathname}${original.search}`)
-  response.headers.set('req-url-basepath', request.nextUrl.basePath)
-  response.headers.set('req-url-pathname', request.nextUrl.pathname)
-  response.headers.set('req-url-query', request.nextUrl.searchParams.get('foo'))
-  response.headers.set('req-url-locale', request.nextUrl.locale)
-  response.headers.set(
-    'req-url-params',
-    url.pathname !== '/static' ? JSON.stringify(params(request.url)) : '{}'
-  )
-  return response
+  return NextResponse.next({
+    headers: {
+      'req-url-path': `${original.pathname}${original.search}`,
+      'req-url-basepath': request.nextUrl.basePath,
+      'req-url-pathname': request.nextUrl.pathname,
+      'req-url-query': request.nextUrl.searchParams.get('foo'),
+      'req-url-locale': request.nextUrl.locale,
+      'req-url-params':
+        url.pathname !== '/static' ? JSON.stringify(params(request.url)) : '{}',
+    },
+  })
 }
 
 function serializeData(data) {

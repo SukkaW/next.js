@@ -1,6 +1,6 @@
 import Anser from 'anser'
 import * as React from 'react'
-import { StackFrame } from 'stacktrace-parser'
+import type { StackFrame } from 'stacktrace-parser'
 import stripAnsi from 'strip-ansi'
 import { getFrameSource } from '../../helpers/stack-frame'
 
@@ -14,7 +14,11 @@ export const CodeFrame: React.FC<CodeFrameProps> = function CodeFrame({
   const formattedFrame = React.useMemo<string>(() => {
     const lines = codeFrame.split(/\r?\n/g)
     const prefixLength = lines
-      .map((line) => /^>? +\d+ +\| ( *)/.exec(stripAnsi(line)))
+      .map((line) =>
+        /^>? +\d+ +\| [ ]+/.exec(stripAnsi(line)) === null
+          ? null
+          : /^>? +\d+ +\| ( *)/.exec(stripAnsi(line))
+      )
       .filter(Boolean)
       .map((v) => v!.pop()!)
       .reduce((c, n) => (isNaN(c) ? n.length : Math.min(c, n.length)), NaN)

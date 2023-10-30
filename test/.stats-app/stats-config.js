@@ -1,12 +1,3 @@
-const fs = require('fs')
-const path = require('path')
-// this page is conditionally added when not testing
-// in webpack 4 mode since it's not supported for webpack 4
-const imagePageData = fs.readFileSync(
-  path.join(__dirname, './image.js'),
-  'utf8'
-)
-
 const clientGlobs = [
   {
     name: 'Client Bundles (main, webpack)',
@@ -32,8 +23,22 @@ const clientGlobs = [
     globs: ['fetched-pages/**/*.html'],
   },
   {
+    name: 'Edge SSR bundle Size',
+    globs: [
+      '.next/server/pages/edge-ssr.js',
+      '.next/server/app/app-edge-ssr/page.js',
+    ],
+  },
+  {
     name: 'Middleware size',
-    globs: ['.next/server/middleware*', '.next/server/edge-runtime-webpack.js'],
+    globs: [
+      '.next/server/middleware*.js',
+      '.next/server/edge-runtime-webpack.js',
+    ],
+  },
+  {
+    name: 'Next Runtimes',
+    globs: ['../../node_modules/next/dist/compiled/next-server/**/*.js'],
   },
 ]
 
@@ -63,8 +68,9 @@ const renames = [
 module.exports = {
   commentHeading: 'Stats from current PR',
   commentReleaseHeading: 'Stats from current release',
-  appBuildCommand: 'NEXT_TELEMETRY_DISABLED=1 yarn next build',
-  appStartCommand: 'NEXT_TELEMETRY_DISABLED=1 yarn next start --port $PORT',
+  appBuildCommand: 'NEXT_TELEMETRY_DISABLED=1 pnpm next build',
+  appStartCommand: 'NEXT_TELEMETRY_DISABLED=1 pnpm next start --port $PORT',
+  appDevCommand: 'NEXT_TELEMETRY_DISABLED=1 pnpm next --port $PORT',
   mainRepo: 'vercel/next.js',
   mainBranch: 'canary',
   autoMergeMain: true,
@@ -74,10 +80,6 @@ module.exports = {
       diff: 'onOutputChange',
       diffConfigFiles: [
         {
-          path: 'pages/image.js',
-          content: imagePageData,
-        },
-        {
           path: 'next.config.js',
           content: `
             module.exports = {
@@ -95,13 +97,9 @@ module.exports = {
       renames,
       configFiles: [
         {
-          path: 'pages/image.js',
-          content: imagePageData,
-        },
-        {
           path: 'next.config.js',
           content: `
-            module.exports = {
+          module.exports = {
               generateBuildId: () => 'BUILD_ID'
             }
           `,
@@ -114,72 +112,16 @@ module.exports = {
         'http://localhost:$PORT/link',
         'http://localhost:$PORT/withRouter',
       ],
-      pagesToBench: [
-        'http://localhost:$PORT/',
-        'http://localhost:$PORT/error-in-render',
-      ],
-      benchOptions: {
-        reqTimeout: 60,
-        concurrency: 50,
-        numRequests: 2500,
-      },
-    },
-    {
-      title: 'Default Build with SWC',
-      diff: 'onOutputChange',
-      diffConfigFiles: [
-        {
-          path: 'pages/image.js',
-          content: imagePageData,
-        },
-        {
-          path: 'next.config.js',
-          content: `
-            module.exports = {
-              generateBuildId: () => 'BUILD_ID',
-              swcMinify: true,
-              webpack(config) {
-                config.optimization.minimize = false
-                config.optimization.minimizer = undefined
-                return config
-              }
-            }
-          `,
-        },
-      ],
-      // renames to apply to make file names deterministic
-      renames,
-      configFiles: [
-        {
-          path: 'pages/image.js',
-          content: imagePageData,
-        },
-        {
-          path: 'next.config.js',
-          content: `
-            module.exports = {
-              swcMinify: true,
-              generateBuildId: () => 'BUILD_ID'
-            }
-          `,
-        },
-      ],
-      filesToTrack: clientGlobs,
-      // will be output to fetched-pages/${pathname}.html
-      pagesToFetch: [
-        'http://localhost:$PORT/',
-        'http://localhost:$PORT/link',
-        'http://localhost:$PORT/withRouter',
-      ],
-      pagesToBench: [
-        'http://localhost:$PORT/',
-        'http://localhost:$PORT/error-in-render',
-      ],
-      benchOptions: {
-        reqTimeout: 60,
-        concurrency: 50,
-        numRequests: 2500,
-      },
+      // TODO: investigate replacing "ab" for this
+      // pagesToBench: [
+      //   'http://localhost:$PORT/',
+      //   'http://localhost:$PORT/error-in-render',
+      // ],
+      // benchOptions: {
+      //   reqTimeout: 60,
+      //   concurrency: 50,
+      //   numRequests: 2500,
+      // },
     },
   ],
 }

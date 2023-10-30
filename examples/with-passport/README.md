@@ -12,7 +12,7 @@ The login cookie is httpOnly, meaning it can only be accessed by the API, and it
 
 Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-passport&project-name=with-passport&repository-name=with-passport)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-passport&project-name=with-passport&repository-name=with-passport)
 
 ## How to use
 
@@ -20,9 +20,13 @@ Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packag
 
 ```bash
 npx create-next-app --example with-passport with-passport-app
-# or
+```
+
+```bash
 yarn create next-app --example with-passport with-passport-app
-# or
+```
+
+```bash
 pnpm create next-app --example with-passport with-passport-app
 ```
 
